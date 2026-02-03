@@ -5,10 +5,19 @@ const mainContainer = document.getElementById('mainContainer');
 const celebration = document.getElementById('celebration');
 const bgHearts = document.getElementById('bgHearts');
 const floatingHearts = document.getElementById('floatingHearts');
+const jumpingGif = document.getElementById('jumpingGif');
 
 // State variables
 let yesButtonScale = 1;
 let noBtnMoveCount = 0;
+let gifJumpInterval = null;
+
+// Configuration for GIF
+const GIF_CONFIG = {
+    url: 'https://media.giphy.com/media/UO5elnTqo4vSg/giphy.gif', // Default celebration GIF - user can change this
+    size: 150, // Size in pixels
+    jumpIntervalMs: 1500 // How often it jumps (in milliseconds)
+};
 
 // Initialize background hearts
 function createBackgroundHearts() {
@@ -25,6 +34,79 @@ function createBackgroundHearts() {
         heart.style.fontSize = `${1 + Math.random() * 2}rem`;
         bgHearts.appendChild(heart);
     }
+}
+
+// Calculate if a position would overlap with the celebration text
+function isPositionSafe(x, y, gifSize) {
+    const celebrationContent = document.querySelector('.celebration-content');
+    if (!celebrationContent) return true;
+    
+    const textRect = celebrationContent.getBoundingClientRect();
+    
+    // Add padding around the text area
+    const padding = 50;
+    const textLeft = textRect.left - padding;
+    const textRight = textRect.right + padding;
+    const textTop = textRect.top - padding;
+    const textBottom = textRect.bottom + padding;
+    
+    // Check if GIF would overlap with text area
+    const gifRight = x + gifSize;
+    const gifBottom = y + gifSize;
+    
+    // Return false if there's overlap
+    if (x < textRight && gifRight > textLeft && y < textBottom && gifBottom > textTop) {
+        return false;
+    }
+    
+    return true;
+}
+
+// Move GIF to random position avoiding the text
+function moveGifToRandomPosition() {
+    const maxX = window.innerWidth - GIF_CONFIG.size - 20;
+    const maxY = window.innerHeight - GIF_CONFIG.size - 20;
+    
+    let randomX, randomY;
+    let attempts = 0;
+    const maxAttempts = 50;
+    
+    // Keep trying until we find a safe position
+    do {
+        randomX = Math.max(20, Math.random() * maxX);
+        randomY = Math.max(20, Math.random() * maxY);
+        attempts++;
+    } while (!isPositionSafe(randomX, randomY, GIF_CONFIG.size) && attempts < maxAttempts);
+    
+    // Apply position
+    jumpingGif.style.left = `${randomX}px`;
+    jumpingGif.style.top = `${randomY}px`;
+    jumpingGif.style.width = `${GIF_CONFIG.size}px`;
+    jumpingGif.style.height = `${GIF_CONFIG.size}px`;
+}
+
+// Start GIF jumping animation
+function startGifJumping() {
+    // Set GIF source
+    jumpingGif.src = GIF_CONFIG.url;
+    
+    // Make visible and position initially
+    jumpingGif.classList.add('visible');
+    moveGifToRandomPosition();
+    
+    // Set up interval to keep jumping
+    gifJumpInterval = setInterval(() => {
+        moveGifToRandomPosition();
+    }, GIF_CONFIG.jumpIntervalMs);
+}
+
+// Stop GIF jumping animation
+function stopGifJumping() {
+    if (gifJumpInterval) {
+        clearInterval(gifJumpInterval);
+        gifJumpInterval = null;
+    }
+    jumpingGif.classList.remove('visible');
 }
 
 // Move No button to random position
@@ -92,6 +174,11 @@ function triggerCelebration() {
         celebration.classList.remove('hidden');
         createFloatingHearts();
         
+        // Start GIF jumping after a brief delay
+        setTimeout(() => {
+            startGifJumping();
+        }, 800);
+        
         // Add confetti-like effect
         setTimeout(() => {
             for (let i = 0; i < 3; i++) {
@@ -154,6 +241,11 @@ window.addEventListener('resize', () => {
         // Adjust if out of bounds
         if (currentX > maxX) noBtn.style.left = `${maxX}px`;
         if (currentY > maxY) noBtn.style.top = `${maxY}px`;
+    }
+    
+    // Reposition GIF if it's visible
+    if (jumpingGif.classList.contains('visible')) {
+        moveGifToRandomPosition();
     }
 });
 
