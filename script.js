@@ -1,0 +1,165 @@
+// Get DOM elements
+const yesBtn = document.getElementById('yesBtn');
+const noBtn = document.getElementById('noBtn');
+const mainContainer = document.getElementById('mainContainer');
+const celebration = document.getElementById('celebration');
+const bgHearts = document.getElementById('bgHearts');
+const floatingHearts = document.getElementById('floatingHearts');
+
+// State variables
+let yesButtonScale = 1;
+let noBtnMoveCount = 0;
+
+// Initialize background hearts
+function createBackgroundHearts() {
+    const heartCount = 15;
+    const hearts = ['💕', '💖', '💗', '💝', '💘'];
+    
+    for (let i = 0; i < heartCount; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'bg-heart';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.left = `${Math.random() * 100}%`;
+        heart.style.top = `${Math.random() * 100}%`;
+        heart.style.animationDelay = `${Math.random() * 5}s`;
+        heart.style.fontSize = `${1 + Math.random() * 2}rem`;
+        bgHearts.appendChild(heart);
+    }
+}
+
+// Move No button to random position
+function moveNoButton() {
+    const container = document.body;
+    const btnRect = noBtn.getBoundingClientRect();
+    
+    // Calculate safe boundaries (keeping button fully visible)
+    const maxX = window.innerWidth - btnRect.width - 20;
+    const maxY = window.innerHeight - btnRect.height - 20;
+    
+    // Generate random position
+    const randomX = Math.max(20, Math.random() * maxX);
+    const randomY = Math.max(20, Math.random() * maxY);
+    
+    // Apply smooth transition
+    noBtn.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = `${randomX}px`;
+    noBtn.style.top = `${randomY}px`;
+    
+    // Increment counter
+    noBtnMoveCount++;
+    
+    // Grow Yes button
+    yesButtonScale += 0.15;
+    yesBtn.style.transform = `scale(${yesButtonScale})`;
+    
+    // Add extra emphasis after several attempts
+    if (noBtnMoveCount > 5) {
+        yesBtn.style.animation = 'pulse 0.5s ease-in-out, btnEntrance 0.6s ease-out';
+    }
+}
+
+// Handle No button hover
+noBtn.addEventListener('mouseenter', () => {
+    moveNoButton();
+});
+
+// Handle No button click (in case they're quick!)
+noBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    moveNoButton();
+});
+
+// Handle mobile touch
+noBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    moveNoButton();
+});
+
+// Handle Yes button click - trigger celebration
+yesBtn.addEventListener('click', () => {
+    triggerCelebration();
+});
+
+// Celebration function
+function triggerCelebration() {
+    // Hide main container
+    mainContainer.style.transition = 'opacity 0.5s ease-out';
+    mainContainer.style.opacity = '0';
+    
+    // Show celebration screen
+    setTimeout(() => {
+        celebration.classList.remove('hidden');
+        createFloatingHearts();
+        
+        // Add confetti-like effect
+        setTimeout(() => {
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => createFloatingHearts(), i * 300);
+            }
+        }, 500);
+    }, 500);
+}
+
+// Create floating hearts for celebration
+function createFloatingHearts() {
+    const heartSymbols = ['❤️', '💕', '💖', '💗', '💝', '💘', '💓', '💞'];
+    const heartCount = 20;
+    
+    for (let i = 0; i < heartCount; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+        
+        // Random horizontal position
+        heart.style.left = `${Math.random() * 100}%`;
+        
+        // Start from bottom
+        heart.style.bottom = '-50px';
+        
+        // Random animation delay
+        heart.style.animationDelay = `${Math.random() * 2}s`;
+        
+        // Random size variation
+        const size = 1.5 + Math.random() * 1.5;
+        heart.style.fontSize = `${size}rem`;
+        
+        floatingHearts.appendChild(heart);
+        
+        // Remove heart after animation completes
+        setTimeout(() => {
+            heart.remove();
+        }, 6000);
+    }
+}
+
+// Initialize the page
+window.addEventListener('DOMContentLoaded', () => {
+    createBackgroundHearts();
+    
+    // Position No button initially in the button container
+    noBtn.style.position = 'relative';
+});
+
+// Ensure No button stays visible on window resize
+window.addEventListener('resize', () => {
+    if (noBtn.style.position === 'fixed') {
+        const btnRect = noBtn.getBoundingClientRect();
+        const maxX = window.innerWidth - btnRect.width - 20;
+        const maxY = window.innerHeight - btnRect.height - 20;
+        
+        let currentX = parseFloat(noBtn.style.left);
+        let currentY = parseFloat(noBtn.style.top);
+        
+        // Adjust if out of bounds
+        if (currentX > maxX) noBtn.style.left = `${maxX}px`;
+        if (currentY > maxY) noBtn.style.top = `${maxY}px`;
+    }
+});
+
+// Add keyboard support for accessibility
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.activeElement === yesBtn) {
+        triggerCelebration();
+    }
+});
