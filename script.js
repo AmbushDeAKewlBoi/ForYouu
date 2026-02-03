@@ -16,7 +16,7 @@ let gifJumpInterval = null;
 const GIF_CONFIG = {
     url: 'https://media.giphy.com/media/UO5elnTqo4vSg/giphy.gif', // Default celebration GIF - user can change this
     size: 150, // Size in pixels
-    jumpIntervalMs: 1500 // How often it jumps (in milliseconds)
+    jumpIntervalMs: 800 // How often it jumps (in milliseconds) - faster now!
 };
 
 // Initialize background hearts
@@ -43,8 +43,8 @@ function isPositionSafe(x, y, gifSize) {
     
     const textRect = celebrationContent.getBoundingClientRect();
     
-    // Add padding around the text area
-    const padding = 50;
+    // Add padding around the text area (smaller padding for more movement freedom)
+    const padding = 30;
     const textLeft = textRect.left - padding;
     const textRight = textRect.right + padding;
     const textTop = textRect.top - padding;
@@ -64,25 +64,55 @@ function isPositionSafe(x, y, gifSize) {
 
 // Move GIF to random position avoiding the text
 function moveGifToRandomPosition() {
-    const maxX = window.innerWidth - GIF_CONFIG.size - 20;
-    const maxY = window.innerHeight - GIF_CONFIG.size - 20;
+    const maxX = window.innerWidth - GIF_CONFIG.size - 40;
+    const maxY = window.innerHeight - GIF_CONFIG.size - 40;
     
     let randomX, randomY;
     let attempts = 0;
-    const maxAttempts = 50;
+    const maxAttempts = 30;
     
     // Keep trying until we find a safe position
     do {
-        randomX = Math.max(20, Math.random() * maxX);
-        randomY = Math.max(20, Math.random() * maxY);
+        randomX = 20 + Math.random() * maxX;
+        randomY = 20 + Math.random() * maxY;
         attempts++;
     } while (!isPositionSafe(randomX, randomY, GIF_CONFIG.size) && attempts < maxAttempts);
     
-    // Apply position
+    // If we couldn't find a safe spot after max attempts, just place it far from center
+    if (attempts >= maxAttempts) {
+        // Place in corners or edges randomly
+        const corner = Math.floor(Math.random() * 4);
+        switch(corner) {
+            case 0: // top left
+                randomX = 20;
+                randomY = 20;
+                break;
+            case 1: // top right
+                randomX = window.innerWidth - GIF_CONFIG.size - 40;
+                randomY = 20;
+                break;
+            case 2: // bottom left
+                randomX = 20;
+                randomY = window.innerHeight - GIF_CONFIG.size - 40;
+                break;
+            case 3: // bottom right
+                randomX = window.innerWidth - GIF_CONFIG.size - 40;
+                randomY = window.innerHeight - GIF_CONFIG.size - 40;
+                break;
+        }
+    }
+    
+    // Add bounce animation class
+    jumpingGif.classList.add('jumping');
+    setTimeout(() => jumpingGif.classList.remove('jumping'), 500);
+    
+    // Apply position with transform for smoother animation
     jumpingGif.style.left = `${randomX}px`;
     jumpingGif.style.top = `${randomY}px`;
     jumpingGif.style.width = `${GIF_CONFIG.size}px`;
     jumpingGif.style.height = `${GIF_CONFIG.size}px`;
+    
+    console.log(`GIF moved to: ${randomX}, ${randomY}`); // Debug log
 }
 
 // Start GIF jumping animation
@@ -174,10 +204,10 @@ function triggerCelebration() {
         celebration.classList.remove('hidden');
         createFloatingHearts();
         
-        // Start GIF jumping after a brief delay
+        // Start GIF jumping immediately
         setTimeout(() => {
             startGifJumping();
-        }, 800);
+        }, 300);
         
         // Add confetti-like effect
         setTimeout(() => {
