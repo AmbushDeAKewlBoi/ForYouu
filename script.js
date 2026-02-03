@@ -14,7 +14,7 @@ let gifJumpInterval = null;
 
 // Configuration for GIF
 const GIF_CONFIG = {
-    url: 'https://media.giphy.com/media/UO5elnTqo4vSg/giphy.gif', // Default celebration GIF - user can change this
+    url: 'nobg2.gif', // Default celebration GIF - user can change this
     size: 150, // Size in pixels
     jumpIntervalMs: 800 // How often it jumps (in milliseconds) - faster now!
 };
