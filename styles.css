@@ -267,6 +267,24 @@ body {
     z-index: 1;
 }
 
+/* Jumping GIF */
+.jumping-gif {
+    position: fixed;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none;
+}
+
+.jumping-gif.visible {
+    opacity: 1;
+}
+
 .heart {
     position: absolute;
     font-size: 2rem;
