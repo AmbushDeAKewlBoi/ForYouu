@@ -1,0 +1,321 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap');
+
+:root {
+    --primary-pink: #ff6b9d;
+    --light-pink: #ffc2d4;
+    --soft-pink: #ffe5ec;
+    --dark-pink: #ff4081;
+    --white: #ffffff;
+    --shadow: rgba(255, 107, 157, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #fff0f5 0%, #ffe5ec 50%, #ffd4e5 100%);
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Background decorative hearts */
+.background-hearts {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.1;
+}
+
+.bg-heart {
+    position: absolute;
+    font-size: 2rem;
+    animation: floatBg 20s infinite ease-in-out;
+    color: var(--primary-pink);
+}
+
+@keyframes floatBg {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-30px) rotate(10deg);
+    }
+}
+
+/* Main container */
+.container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Question styling */
+.question {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    color: var(--primary-pink);
+    text-align: center;
+    margin-bottom: 3rem;
+    text-shadow: 3px 3px 10px var(--shadow);
+    animation: pulse 2s ease-in-out infinite;
+    line-height: 1.3;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Buttons container */
+.buttons-container {
+    position: relative;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px;
+}
+
+/* Button base styles */
+.btn {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    padding: 1rem 3rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px var(--shadow);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Yes button */
+.btn-yes {
+    background: linear-gradient(135deg, var(--primary-pink), var(--dark-pink));
+    color: var(--white);
+    animation: btnEntrance 0.6s ease-out 0.3s backwards;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.btn-yes:hover {
+    transform: scale(1.1) rotate(-2deg);
+    box-shadow: 0 12px 30px var(--shadow);
+}
+
+@keyframes btnEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* No button */
+.btn-no {
+    background: var(--white);
+    color: var(--primary-pink);
+    border: 3px solid var(--primary-pink);
+    animation: btnEntrance 0.6s ease-out 0.5s backwards;
+    position: absolute;
+    transition: all 0.3s ease-out;
+}
+
+.btn-no:hover {
+    background: var(--soft-pink);
+    transform: scale(1.05);
+}
+
+/* Celebration screen */
+.celebration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff4081 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: opacity 0.5s ease-out;
+}
+
+.celebration.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.celebration-content {
+    text-align: center;
+    color: var(--white);
+    animation: celebrationPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes celebrationPop {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.celebration-title {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(3rem, 10vw, 6rem);
+    margin-bottom: 1rem;
+    animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.celebration-message {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    font-weight: 600;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out 0.3s forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Floating hearts animation */
+.floating-hearts {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.heart {
+    position: absolute;
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.8);
+    animation: floatUp 4s ease-in forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) rotate(720deg) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .question {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .btn {
+        font-size: 1.2rem;
+        padding: 0.8rem 2rem;
+    }
+    
+    .buttons-container {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .question {
+        font-size: 2rem;
+    }
+    
+    .btn {
+        font-size: 1rem;
+        padding: 0.7rem 1.5rem;
+    }
+}
