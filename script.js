@@ -14,7 +14,7 @@ let gifJumpInterval = null;
 
 // Configuration for GIF
 const GIF_CONFIG = {
-    url: 'nobg2.gif', // Default celebration GIF - user can change this
+    url: 'nobg2.gif', // Your GIF file - make sure it's in the same folder as index.html
     size: 150, // Size in pixels
     jumpIntervalMs: 800 // How often it jumps (in milliseconds) - faster now!
 };
@@ -71,48 +71,53 @@ function moveGifToRandomPosition() {
     let attempts = 0;
     const maxAttempts = 30;
     
-    // Keep trying until we find a safe position
-    do {
-        randomX = 20 + Math.random() * maxX;
-        randomY = 20 + Math.random() * maxY;
-        attempts++;
-    } while (!isPositionSafe(randomX, randomY, GIF_CONFIG.size) && attempts < maxAttempts);
+    // Hide the GIF first (instant disappear)
+    jumpingGif.style.opacity = '0';
     
-    // If we couldn't find a safe spot after max attempts, just place it far from center
-    if (attempts >= maxAttempts) {
-        // Place in corners or edges randomly
-        const corner = Math.floor(Math.random() * 4);
-        switch(corner) {
-            case 0: // top left
-                randomX = 20;
-                randomY = 20;
-                break;
-            case 1: // top right
-                randomX = window.innerWidth - GIF_CONFIG.size - 40;
-                randomY = 20;
-                break;
-            case 2: // bottom left
-                randomX = 20;
-                randomY = window.innerHeight - GIF_CONFIG.size - 40;
-                break;
-            case 3: // bottom right
-                randomX = window.innerWidth - GIF_CONFIG.size - 40;
-                randomY = window.innerHeight - GIF_CONFIG.size - 40;
-                break;
+    // After a brief moment, move it and show it again
+    setTimeout(() => {
+        // Keep trying until we find a safe position
+        do {
+            randomX = 20 + Math.random() * maxX;
+            randomY = 20 + Math.random() * maxY;
+            attempts++;
+        } while (!isPositionSafe(randomX, randomY, GIF_CONFIG.size) && attempts < maxAttempts);
+        
+        // If we couldn't find a safe spot after max attempts, just place it far from center
+        if (attempts >= maxAttempts) {
+            // Place in corners or edges randomly
+            const corner = Math.floor(Math.random() * 4);
+            switch(corner) {
+                case 0: // top left
+                    randomX = 20;
+                    randomY = 20;
+                    break;
+                case 1: // top right
+                    randomX = window.innerWidth - GIF_CONFIG.size - 40;
+                    randomY = 20;
+                    break;
+                case 2: // bottom left
+                    randomX = 20;
+                    randomY = window.innerHeight - GIF_CONFIG.size - 40;
+                    break;
+                case 3: // bottom right
+                    randomX = window.innerWidth - GIF_CONFIG.size - 40;
+                    randomY = window.innerHeight - GIF_CONFIG.size - 40;
+                    break;
+            }
         }
-    }
-    
-    // Add bounce animation class
-    jumpingGif.classList.add('jumping');
-    setTimeout(() => jumpingGif.classList.remove('jumping'), 500);
-    
-    // Apply position with transform for smoother animation
-    jumpingGif.style.left = `${randomX}px`;
-    jumpingGif.style.top = `${randomY}px`;
-    jumpingGif.style.width = `${GIF_CONFIG.size}px`;
-    jumpingGif.style.height = `${GIF_CONFIG.size}px`;
-    
-    console.log(`GIF moved to: ${randomX}, ${randomY}`); // Debug log
+        
+        // Apply position
+        jumpingGif.style.left = `${randomX}px`;
+        jumpingGif.style.top = `${randomY}px`;
+        jumpingGif.style.width = `${GIF_CONFIG.size}px`;
+        jumpingGif.style.height = `${GIF_CONFIG.size}px`;
+        
+        // Show the GIF instantly at new position
+        jumpingGif.style.opacity = '1';
+        
+        console.log(`GIF popped at: ${randomX}, ${randomY}`); // Debug log
+    }, 100); // Brief delay to make disappear/reappear more noticeable
 }
 
 // Start GIF jumping animation
